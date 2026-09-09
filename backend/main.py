@@ -5,6 +5,11 @@ from sqlalchemy.orm import Session
 from database import engine, get_db
 from models import Activity, ActivityHistory, DailySurvey, User
 
+from recommendation import (
+    get_recent_activity_ids,
+    recommend_activity
+)
+
 from schemas import (
     ActivityCreate,
     ActivityHistoryCreate,
@@ -38,7 +43,10 @@ def database_test():
 
 
 @app.post("/users")
-def create_user(user: UserCreate, db: Session = Depends(get_db)):
+def create_user(
+    user: UserCreate,
+    db: Session = Depends(get_db)
+):
     new_user = User(
         username=user.username
     )
@@ -49,11 +57,15 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
 
     return new_user
 
+
 @app.get("/users")
-def get_users(db: Session = Depends(get_db)):
+def get_users(
+    db: Session = Depends(get_db)
+):
     users = db.query(User).all()
 
     return users
+
 
 @app.post("/activities")
 def create_activity(
@@ -74,7 +86,6 @@ def create_activity(
     return new_activity
 
 
-
 @app.post("/activity-history")
 def create_activity_history(
     history: ActivityHistoryCreate,
@@ -91,6 +102,7 @@ def create_activity_history(
     db.refresh(new_history)
 
     return new_history
+
 
 @app.post("/daily-surveys")
 def create_daily_survey(
@@ -111,6 +123,7 @@ def create_daily_survey(
 
     return new_survey
 
+
 @app.get("/users/{user_id}/activity-history")
 def get_activity_history(
     user_id: int,
@@ -123,6 +136,7 @@ def get_activity_history(
     )
 
     return history
+
 
 @app.get("/users/{user_id}/daily-surveys")
 def get_daily_surveys(
@@ -138,8 +152,48 @@ def get_daily_surveys(
     return surveys
 
 
+@app.get("/users/{user_id}/recommendation")
+def get_recommendation(
+    user_id: int,
+    db: Session = Depends(get_db)
+):
+
+    survey = (
+        db.query(DailySurvey)
+        .filter(DailySurvey.user_id == user_id)
+        .order_by(DailySurvey.date.desc())
+        .first()
+    )
+
+    if survey is None:
+        return {
+            "message": "No daily survey found for this user."
+        }
 
 
-    
+    activities = db.query(Activity).all()
 
+ 
+    recent_activity_ids = get_recent_activity_ids(
+        user_id,
+        db
+    )
 
+ 
+    recommendation = recommend_activity(
+        mood=survey.mood,
+        energy=survey.energy,
+        available_minutes=survey.available_minutes,
+        activities=activities,
+        recent_activity_ids=recent_activity_ids
+    )
+
+    if recommendation is None:
+        return {
+            "message": "Cannot find a recommendation!"
+        }
+
+    return {
+        "activity": recommendation.name,
+        "description": recommendation.description
+    }
