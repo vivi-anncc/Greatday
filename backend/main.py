@@ -13,8 +13,6 @@ from schemas import (
 )
 
 
-
-
 app = FastAPI()
 
 
@@ -64,7 +62,9 @@ def create_activity(
 ):
     new_activity = Activity(
         name=activity.name,
-        description=activity.description
+        description=activity.description,
+        energy_required=activity.energy_required,
+        minimum_minutes=activity.minimum_minutes
     )
 
     db.add(new_activity)
@@ -72,6 +72,7 @@ def create_activity(
     db.refresh(new_activity)
 
     return new_activity
+
 
 
 @app.post("/activity-history")

@@ -21,14 +21,25 @@ class Activity(Base):
     __tablename__ = "activities"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+
     name: Mapped[str] = mapped_column(
         String(100),
         nullable=False
     )
+
     description: Mapped[str | None] = mapped_column(
         Text,
         nullable=True
     )
+
+    energy_required: Mapped[int] = mapped_column(
+        nullable=False
+    )
+
+    minimum_minutes: Mapped[int] = mapped_column(
+        nullable=False
+    )
+
 
 
 class ActivityHistory(Base):
