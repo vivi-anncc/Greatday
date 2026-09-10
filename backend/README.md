@@ -1,6 +1,6 @@
 # GreatDay
 
-GreatDay is a recommendation application built with **Python, FastAPI, and PostgreSQL**. The application provides a RESTful API for creating, viewing, updating, and deleting recommendations. 
+GreatDay is a recommendation application built with **Python, FastAPI, and PostgreSQL**. 
 
 ## Features
 
