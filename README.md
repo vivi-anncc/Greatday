@@ -1,6 +1,7 @@
-# Recommendation App
+# GreatDay
 
-A recommendation application built with **Python, FastAPI, and PostgreSQL**. The application provides a RESTful API for creating, viewing, updating, and deleting recommendations. 
+A recommendation application built with **Python, FastAPI, and PostgreSQL**  that provides users with personalized activity recommendations based on their preferences and mood.
+This project was created to gain hands-on experience with Python and FastAPI, while learning how to build RESTful APIs, work with databases, validate user input, and structure a backend application.
 
 ## Features
 
